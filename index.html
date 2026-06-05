@@ -84,6 +84,43 @@
                 </div>
             </div>
 
+            <!-- ส่วนเพิ่มใหม่: เลือกสีฉากหลัง -->
+            <div>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">2. เลือกสีฉากหลัง</label>
+                <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-5" id="bg_group">
+                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
+                        <input type="checkbox" name="bg_color" value="สีฟ้า" checked onclick="selectBgColor(this)" class="sr-only">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-sky-400 border border-slate-300"></span>สีฟ้า
+                        </span>
+                    </label>
+                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="checkbox" name="bg_color" value="สีน้ำเงิน" onclick="selectBgColor(this)" class="sr-only">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-blue-800 border border-slate-300"></span>สีน้ำเงิน
+                        </span>
+                    </label>
+                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="checkbox" name="bg_color" value="สีขาว" onclick="selectBgColor(this)" class="sr-only">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-white border border-slate-300"></span>สีขาว
+                        </span>
+                    </label>
+                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="checkbox" name="bg_color" value="สีเทา" onclick="selectBgColor(this)" class="sr-only">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-slate-400 border border-slate-300"></span>สีเทา
+                        </span>
+                    </label>
+                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm col-span-2 sm:col-span-1">
+                        <input type="checkbox" name="bg_color" value="ไม่มีพื้นหลัง" onclick="selectBgColor(this)" class="sr-only">
+                        <span class="flex items-center gap-1.5">
+                            <span class="w-3 h-3 rounded-full bg-slate-100 border border-dashed border-slate-400 flex items-center justify-center text-[8px] font-bold text-slate-400">X</span>ไม่มีพื้นหลัง
+                        </span>
+                    </label>
+                </div>
+            </div>
+
             <!-- มหาวิทยาลัย -->
             <div id="university_field" class="hidden bg-slate-50 p-4 rounded-xl border border-slate-200">
                 <label class="block text-sm font-medium text-slate-700 mb-1">ระบุชื่อมหาวิทยาลัย</label>
@@ -111,7 +148,7 @@
 
             <!-- ตัวเลือกภาพปรินต์ -->
             <div class="border-t pt-4">
-                <label class="block text-sm font-semibold text-slate-700 mb-2">2. ต้องการรับภาพปรินต์จัดส่งด้วยหรือไม่?</label>
+                <label class="block text-sm font-semibold text-slate-700 mb-2">3. ต้องการรับภาพปรินต์จัดส่งด้วยหรือไม่?</label>
                 <div class="flex gap-4 mb-3">
                     <label class="flex items-center space-x-2 cursor-pointer text-sm">
                         <input type="radio" name="want_print" value="no" checked onclick="togglePrint(false)" class="w-4 h-4">
@@ -125,7 +162,7 @@
 
                 <div id="print_options" class="hidden bg-blue-50/50 p-4 rounded-xl border border-blue-100 space-y-4">
                     
-                    <!-- ส่วนเลือกขนาดภาพ (ปรับปรุงใหม่เป็นปุ่ม Checkbox นูนเด่นเด้ง) -->
+                    <!-- ส่วนเลือกขนาดภาพ -->
                     <div>
                         <span class="block text-xs font-semibold text-slate-500 mb-2 px-1">เลือกขนาดภาพ: (1 โหลสามารถคละได้สูงสุด 2 ขนาด)</span>
                         <div class="grid grid-cols-3 gap-2.5" id="size_group">
@@ -144,7 +181,7 @@
                         </div>
                     </div>
                     
-                    <!-- ส่วนเลือกจำนวนรูป (เปลี่ยนเป็นระบบ Checkbox นูนเด่นตามบรีฟ) -->
+                    <!-- ส่วนเลือกจำนวนรูป -->
                     <div>
                         <span class="block text-xs font-semibold text-slate-500 mb-2 px-1">เลือกจำนวนแพ็กเกจ:</span>
                         <div class="grid grid-cols-2 gap-3" id="quantity_group">
@@ -249,20 +286,36 @@
             calculateTotal();
         }
 
+        // ฟังก์ชันจัดการเลือก Checkbox สีฉากหลัง (ทำหน้าที่เหมือน radio เลือกได้ทีละอัน)
+        function selectBgColor(clickedCheckbox) {
+            if (clickedCheckbox.checked) {
+                document.querySelectorAll('input[name="bg_color"]').forEach(cb => {
+                    if (cb !== clickedCheckbox) cb.checked = false;
+                });
+            } else {
+                clickedCheckbox.checked = true; // บังคับให้เลือกไว้อย่างน้อยหนึ่งอัน
+            }
+
+            // อัปเดตคลาสดีไซน์นูนเด่นของปุ่มสีฉากหลัง
+            document.querySelectorAll('input[name="bg_color"]').forEach(cb => {
+                cb.parentElement.classList.toggle('selected-box', cb.checked);
+            });
+
+            calculateTotal();
+        }
+
         // ฟังก์ชันจัดการเลือก Checkbox ขนาดภาพ (คุมเงื่อนไข ครึ่งโหล=1, 1โหล=2)
         function handleSizeSelection(clickedCheckbox) {
             const isFullQty = document.getElementById('qty_full').checked;
             const checkedSizes = document.querySelectorAll('input[name="print_size"]:checked');
             
             if (isFullQty) {
-                // ถ้าเลือก 1 โหล จะเลือกได้สูงสุด 2 ตัวเลือก
                 if (checkedSizes.length > 2) {
                     clickedCheckbox.checked = false;
                     alert('แพ็กเกจ 1 โหล สามารถเลือกขนาดผสมกันได้สูงสุด 2 ขนาดเท่านั้นครับ');
                     return;
                 }
             } else {
-                // ถ้าเลือก ครึ่งโหล จะเลือกได้แค่ 1 ตัวเลือกเท่านั้น (ทำหน้าที่เหมือน radio)
                 if (checkedSizes.length > 1) {
                     document.querySelectorAll('input[name="print_size"]').forEach(cb => {
                         if (cb !== clickedCheckbox) cb.checked = false;
@@ -270,19 +323,14 @@
                 }
             }
             
-            // อัปเดตคลาสดีไซน์นูนเด่นของปุ่มขนาดภาพ
             document.querySelectorAll('input[name="print_size"]').forEach(cb => {
-                if (cb.checked) {
-                    cb.parentElement.classList.add('selected-box');
-                } else {
-                    cb.parentElement.classList.remove('selected-box');
-                }
+                cb.parentElement.classList.toggle('selected-box', cb.checked);
             });
             
             calculateTotal();
         }
 
-        // ฟังก์ชันเลือกจำนวนรูป (สลับการทำงาน Checkbox ล่าง และปรับเปลี่ยนสิทธิ์เลือกขนาดด้านบน)
+        // ฟังก์ชันเลือกจำนวนรูป
         function selectQuantity(type) {
             const cbHalf = document.getElementById('qty_half');
             const cbFull = document.getElementById('qty_full');
@@ -291,30 +339,26 @@
                 if (cbHalf.checked) {
                     cbFull.checked = false;
                 } else {
-                    cbHalf.checked = true; // บังคับให้เลือกไว้อย่างน้อยหนึ่งอัน
+                    cbHalf.checked = true;
                 }
             } else if (type === 'full') {
                 if (cbFull.checked) {
                     cbHalf.checked = false;
                 } else {
-                    cbFull.checked = true; // บังคับให้เลือกไว้อย่างน้อยหนึ่งอัน
+                    cbFull.checked = true;
                 }
             }
             
-            // ปรับสีไฮไลท์กล่องจำนวนรูป
             cbHalf.parentElement.parentElement.classList.toggle('selected-box', cbHalf.checked);
             cbFull.parentElement.parentElement.classList.toggle('selected-box', cbFull.checked);
             
-            // รีเซ็ตการเลือกขนาดภาพด้านบนให้สอดคล้องกับเงื่อนไขใหม่เพื่อป้องกัน Error ราคา
             const activeSizes = document.querySelectorAll('input[name="print_size"]:checked');
             if (cbHalf.checked && activeSizes.length > 1) {
-                // ถ้าสลับมาเป็นครึ่งโหล แต่เดิมเลือกไว้เกิน 1 ขนาด ให้เหลือแค่อันแรกอันเดียว
                 activeSizes.forEach((cb, index) => {
                     if (index > 0) cb.checked = false;
                 });
             }
             
-            // อัปเดตสไตล์ของขนาดภาพอีกครั้ง
             document.querySelectorAll('input[name="print_size"]').forEach(cb => {
                 cb.parentElement.classList.toggle('selected-box', cb.checked);
             });
@@ -341,6 +385,7 @@
             let items = '';
             let details = '';
 
+            // ทรงผม
             const hairNumber = document.getElementById('hair_style_number').value;
             if(hairNumber) {
                 details += '<p class="break-words">• ทรงผมที่เลือก: เบอร์ ' + hairNumber + '</p>';
@@ -348,6 +393,13 @@
                 details += '<p class="break-words text-amber-600">• ทรงผม: ไม่มีเบอร์ (ส่งภาพแคปในแชทแทน)</p>';
             }
 
+            // สีฉากหลัง (เพิ่มแสดงผลในมินิใบเสร็จ)
+            const bgCheckbox = document.querySelector('input[name="bg_color"]:checked');
+            if(bgCheckbox) {
+                details += '<p class="break-words">• สีฉากหลัง: ' + bgCheckbox.value + '</p>';
+            }
+
+            // ชุด
             const suitRadio = document.querySelector('input[name="suit_type"]:checked');
             if(suitRadio) {
                 sPrice = 200;
@@ -368,15 +420,15 @@
             }
             document.getElementById('formula_suit').innerText = sPrice + " บ.";
 
+            // งานด่วน
             if(document.getElementById('express_job').checked) {
                 ePrice = 90;
                 items += '<div class="flex justify-between"><span>- บริการงานด่วนพิเศษ</span><span>'+ePrice.toFixed(2)+'</span></div>';
             }
             document.getElementById('formula_express').innerText = ePrice + " บ.";
 
-            // คำนวณฝั่งภาพปรินต์จัดส่ง
+            // ภาพปรินต์จัดส่ง
             if(document.querySelector('input[name="want_print"]:checked').value === 'yes') {
-                // รวมขนาดที่เลือกทั้งหมดมาโชว์ในใบเสร็จ
                 let sizeArray = [];
                 document.querySelectorAll('input[name="print_size"]:checked').forEach(cb => {
                     sizeArray.push(cb.value);
@@ -413,7 +465,6 @@
             document.getElementById('receipt_total').innerText = total.toFixed(2) + " THB";
         }
         
-        // รันครั้งแรกเพื่อให้รูปแบบแสดงผลถูกต้องเริ่มต้น
         calculateTotal();
     </script>
 </body>
