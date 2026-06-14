@@ -43,12 +43,12 @@
 
                 <div>
                     <label for="hair_style_number" class="block text-xs text-slate-500 mb-1">
-                        เลือกหมายเลขทรงผม (เบอร์ 1 - 50)
+                        เลือกหมายเลขทรงผม (เบอร์ 1 - 23)
                     </label>
                     <select id="hair_style_number" name="hair_style_number" onchange="calculateTotal()" class="w-full p-2.5 border rounded-lg bg-white outline-none focus:border-blue-500 text-sm">
                         <option value="">-- กรุณาเลือกเบอร์ทรงผม --</option>
                         <script>
-                            for (let i = 1; i <= 50; i++) {
+                            for (let i = 1; i <= 23; i++) {
                                 document.write(`<option value="${i}">ทรงผมเบอร์ ${i}</option>`);
                             }
                         </script>
