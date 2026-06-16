@@ -15,8 +15,36 @@
             border-color: #2563eb !important;
             color: #1d4ed8 !important;
             box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.1), 0 2px 4px -1px rgba(37, 99, 235, 0.06) !important;
-            transform: scale(1.02);
+            transform: none;
             font-weight: 600;
+        }
+
+        .choice-card {
+            min-height: 44px;
+        }
+
+        .choice-card:focus-within {
+            outline: 3px solid rgba(37, 99, 235, 0.24);
+            outline-offset: 2px;
+        }
+
+        .field-error {
+            border-color: #dc2626 !important;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+        }
+
+        .payment-disabled {
+            opacity: 0.45;
+            filter: grayscale(0.35);
+            pointer-events: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+                animation-duration: 0.01ms !important;
+            }
         }
     </style>
 </head>
@@ -28,11 +56,23 @@
             <p class="text-blue-100 text-sm mt-1">Photoshopby.ps</p>
         </div>
 
-        <form class="p-6 md:p-8 space-y-6" oninput="calculateTotal()">
+        <form id="order_form" class="p-6 md:p-8 space-y-6" oninput="markInteracted(); calculateTotal()" novalidate>
+            
+            <!-- แถบสร้างความมั่นใจก่อนเริ่มสั่ง -->
+            <div class="grid gap-2 sm:grid-cols-2">
+                <div class="rounded-xl border border-blue-100 bg-blue-50 p-3 text-sm text-blue-900">
+                    <span class="font-semibold block">ตรวจรายการก่อนลงคิว</span>
+                    <span class="text-xs text-blue-800">ยอดรวมและใบสรุปอัปเดตอัตโนมัติก่อนชำระเงิน</span>
+                </div>
+                <div class="rounded-xl border border-emerald-100 bg-emerald-50 p-3 text-sm text-emerald-900">
+                    <span class="font-semibold block">ส่งงานผ่านแชทร้าน</span>
+                    <span class="text-xs text-emerald-800">โอนแล้วส่งสลิปพร้อมรูปหน้าตรงให้ร้านได้เลย</span>
+                </div>
+            </div>
             
             <!-- ส่วนเลือกทรงผม -->
             <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
-                <div class="flex items-center justify-between">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <label class="block text-sm font-semibold text-slate-700">
                         เลือกทรงผมที่ต้องการ
                     </label>
@@ -55,7 +95,7 @@
                     </select>
                 </div>
                 <p class="text-xs text-amber-600 bg-amber-50 p-2.5 rounded-lg border border-amber-200">
-                    💡 **หมายเหตุ:** หากไม่มีเบอร์ทรงผมที่ต้องการ สามารถเลือกเว้นว่างไว้ แล้วแคปภาพทรงผมส่งให้ทางร้านแทนได้เลยครับ
+                    หมายเหตุ: หากไม่มีเบอร์ทรงผมที่ต้องการ สามารถเว้นว่างไว้ แล้วส่งภาพทรงผมในแชทร้านแทนได้ครับ
                 </p>
             </div>
 
@@ -65,55 +105,56 @@
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">1. เลือกประเภทชุด (รับเฉพาะไฟล์ 200 บาท)</label>
                 <div class="grid grid-cols-2 gap-3 sm:grid-cols-4" id="suit_group">
-                    <label class="suit-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
+                    <label class="suit-card choice-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
                         <input type="radio" name="suit_type" value="ทำงาน" class="sr-only" onclick="selectSuit(this, 'ทำงาน')" required>
                         <span class="text-sm">ชุดทำงาน</span>
                     </label>
-                    <label class="suit-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
+                    <label class="suit-card choice-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
                         <input type="radio" name="suit_type" value="นักศึกษา" class="sr-only" onclick="selectSuit(this, 'นักศึกษา')">
                         <span class="text-sm">ชุดนักศึกษา</span>
                     </label>
-                    <label class="suit-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
+                    <label class="suit-card choice-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
                         <input type="radio" name="suit_type" value="ราชการ" class="sr-only" onclick="selectSuit(this, 'ราชการ')">
                         <span class="text-sm">ชุดข้าราชการ</span>
                     </label>
-                    <label class="suit-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
+                    <label class="suit-card choice-card flex items-center justify-center p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition duration-200">
                         <input type="radio" name="suit_type" value="ครุย" class="sr-only" onclick="selectSuit(this, 'ครุย')">
                         <span class="text-sm">ชุดครุย</span>
                     </label>
                 </div>
+                <p id="suit_error" class="hidden mt-2 text-xs font-medium text-red-600">กรุณาเลือกประเภทชุดก่อนชำระเงินครับ</p>
             </div>
 
             <!-- ส่วนเพิ่มใหม่: เลือกสีฉากหลัง -->
             <div>
                 <label class="block text-sm font-semibold text-slate-700 mb-2">2. เลือกสีฉากหลัง</label>
                 <div class="grid grid-cols-2 gap-2.5 sm:grid-cols-5" id="bg_group">
-                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
-                        <input type="checkbox" name="bg_color" value="สีฟ้า" checked onclick="selectBgColor(this)" class="sr-only">
+                    <label class="bg-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
+                        <input type="radio" name="bg_color" value="สีฟ้า" checked onclick="selectBgColor(this)" class="sr-only">
                         <span class="flex items-center gap-1.5">
                             <span class="w-3 h-3 rounded-full bg-sky-400 border border-slate-300"></span>สีฟ้า
                         </span>
                     </label>
-                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
-                        <input type="checkbox" name="bg_color" value="สีน้ำเงิน" onclick="selectBgColor(this)" class="sr-only">
+                    <label class="bg-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="radio" name="bg_color" value="สีน้ำเงิน" onclick="selectBgColor(this)" class="sr-only">
                         <span class="flex items-center gap-1.5">
                             <span class="w-3 h-3 rounded-full bg-blue-800 border border-slate-300"></span>สีน้ำเงิน
                         </span>
                     </label>
-                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
-                        <input type="checkbox" name="bg_color" value="สีขาว" onclick="selectBgColor(this)" class="sr-only">
+                    <label class="bg-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="radio" name="bg_color" value="สีขาว" onclick="selectBgColor(this)" class="sr-only">
                         <span class="flex items-center gap-1.5">
                             <span class="w-3 h-3 rounded-full bg-white border border-slate-300"></span>สีขาว
                         </span>
                     </label>
-                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
-                        <input type="checkbox" name="bg_color" value="สีเทา" onclick="selectBgColor(this)" class="sr-only">
+                    <label class="bg-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                        <input type="radio" name="bg_color" value="สีเทา" onclick="selectBgColor(this)" class="sr-only">
                         <span class="flex items-center gap-1.5">
                             <span class="w-3 h-3 rounded-full bg-slate-400 border border-slate-300"></span>สีเทา
                         </span>
                     </label>
-                    <label class="bg-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm col-span-2 sm:col-span-1">
-                        <input type="checkbox" name="bg_color" value="ไม่มีพื้นหลัง" onclick="selectBgColor(this)" class="sr-only">
+                    <label class="bg-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm col-span-2 sm:col-span-1">
+                        <input type="radio" name="bg_color" value="ไม่มีพื้นหลัง" onclick="selectBgColor(this)" class="sr-only">
                         <span class="flex items-center gap-1.5">
                             <span class="w-3 h-3 rounded-full bg-slate-100 border border-dashed border-slate-400 flex items-center justify-center text-[8px] font-bold text-slate-400">X</span>ไม่มีพื้นหลัง
                         </span>
@@ -166,35 +207,36 @@
                     <div>
                         <span class="block text-xs font-semibold text-slate-500 mb-2 px-1">เลือกขนาดภาพ: (1 โหลสามารถคละได้สูงสุด 2 ขนาด)</span>
                         <div class="grid grid-cols-3 gap-2.5" id="size_group">
-                            <label class="size-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
+                            <label class="size-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
                                 <input type="checkbox" name="print_size" value="1 นิ้ว" checked onclick="handleSizeSelection(this)" class="sr-only">
                                 <span>1 นิ้ว</span>
                             </label>
-                            <label class="size-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                            <label class="size-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
                                 <input type="checkbox" name="print_size" value="1.5 นิ้ว" onclick="handleSizeSelection(this)" class="sr-only">
                                 <span>1.5 นิ้ว</span>
                             </label>
-                            <label class="size-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                            <label class="size-card choice-card p-2.5 border bg-white rounded-xl flex items-center justify-center cursor-pointer text-sm transition duration-200 shadow-sm">
                                 <input type="checkbox" name="print_size" value="2 นิ้ว" onclick="handleSizeSelection(this)" class="sr-only">
                                 <span>2 นิ้ว</span>
                             </label>
                         </div>
+                        <p id="size_helper" class="mt-2 text-xs text-slate-500">เลือกแล้ว 1/1 ขนาด สำหรับครึ่งโหล</p>
                     </div>
                     
                     <!-- ส่วนเลือกจำนวนรูป -->
                     <div>
                         <span class="block text-xs font-semibold text-slate-500 mb-2 px-1">เลือกจำนวนแพ็กเกจ:</span>
                         <div class="grid grid-cols-2 gap-3" id="quantity_group">
-                            <label class="qty-card p-3 border bg-white rounded-xl flex justify-between items-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
+                            <label class="qty-card choice-card p-3 border bg-white rounded-xl flex justify-between items-center cursor-pointer text-sm transition duration-200 shadow-sm selected-box">
                                 <span class="flex items-center gap-2">
-                                    <input type="checkbox" id="qty_half" value="90" checked onclick="selectQuantity('half')" class="w-4 h-4 text-blue-600 rounded"> 
+                                    <input type="radio" name="print_quantity" id="qty_half" value="90" checked onclick="selectQuantity('half')" class="w-4 h-4 text-blue-600"> 
                                     ครึ่งโหล (6 รูป)
                                 </span>
                                 <span class="font-bold text-blue-600">+90.-</span>
                             </label>
-                            <label class="qty-card p-3 border bg-white rounded-xl flex justify-between items-center cursor-pointer text-sm transition duration-200 shadow-sm">
+                            <label class="qty-card choice-card p-3 border bg-white rounded-xl flex justify-between items-center cursor-pointer text-sm transition duration-200 shadow-sm">
                                 <span class="flex items-center gap-2">
-                                    <input type="checkbox" id="qty_full" value="120" onclick="selectQuantity('full')" class="w-4 h-4 text-blue-600 rounded"> 
+                                    <input type="radio" name="print_quantity" id="qty_full" value="120" onclick="selectQuantity('full')" class="w-4 h-4 text-blue-600"> 
                                     หนึ่งโหล (12 รูป)
                                 </span>
                                 <span class="font-bold text-blue-600">+120.-</span>
@@ -203,15 +245,16 @@
                     </div>
                     
                     <textarea id="shipping_address" rows="2" class="w-full p-2.5 border rounded-lg bg-white text-sm outline-none placeholder-slate-400 focus:border-blue-500" placeholder="ระบุ ชื่อ-นามสกุล, เบอร์โทร และที่อยู่จัดส่ง"></textarea>
+                    <p id="shipping_error" class="hidden text-xs font-medium text-red-600">กรุณาระบุชื่อ เบอร์โทร และที่อยู่จัดส่งก่อนชำระเงินครับ</p>
                 </div>
             </div>
 
             <!-- คำนวณราคา -->
             <div class="bg-slate-900 text-white p-5 rounded-xl space-y-2.5 shadow-inner text-sm">
-                <div class="flex justify-between text-slate-400">
+                <div class="grid gap-1 text-slate-400 sm:grid-cols-3">
                     <span>ค่าตัดต่อชุด: <span id="formula_suit">0 บาท</span></span>
                     <span>งานด่วน: <span id="formula_express">0 บาท</span></span>
-                    <span>จัดส่ง: <span id="formula_print">0 บาท</span></span>
+                    <span>ภาพปรินต์: <span id="formula_print">0 บาท</span></span>
                 </div>
                 <div class="border-t border-slate-800 pt-2 flex justify-between items-center text-xs text-slate-400">
                     <span>สูตรคำนวณสุทธิ:</span>
@@ -223,10 +266,23 @@
                 </div>
             </div>
 
+            <!-- เช็กลิสต์ก่อนชำระเงิน -->
+            <div id="readiness_panel" class="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2 text-sm">
+                <div class="flex items-center justify-between gap-3">
+                    <h2 class="font-semibold text-slate-800">ตรวจสอบก่อนชำระเงิน</h2>
+                    <span id="ready_badge" class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">ยังไม่พร้อมชำระ</span>
+                </div>
+                <ul class="space-y-1.5 text-xs text-slate-600" id="readiness_list">
+                    <li id="check_suit">○ เลือกประเภทชุด</li>
+                    <li id="check_hair">○ เลือกเบอร์ทรงผมหรือส่งภาพในแชท</li>
+                    <li id="check_shipping">○ ที่อยู่จัดส่งครบถ้วนเมื่อรับภาพปรินต์</li>
+                </ul>
+            </div>
+
             <!-- มินิใบเสร็จ -->
-            <div class="bg-amber-50/50 border border-dashed border-slate-300 rounded-xl p-4 font-mono text-xs text-slate-600 space-y-3 shadow-sm">
-                <div class="text-center font-bold text-white bg-red-600 p-2.5 rounded-lg shadow-md border-b-2 border-red-800 text-sm tracking-wide">
-                    🚨 แคปส่วนนี้ส่งให้ทางร้าน 🚨
+            <div class="bg-amber-50/50 border border-dashed border-slate-300 rounded-xl p-4 text-xs text-slate-600 space-y-3 shadow-sm">
+                <div class="text-center font-bold text-amber-950 bg-amber-100 p-2.5 rounded-lg border border-amber-200 text-sm">
+                    แคปใบสรุปนี้ส่งให้ทางร้าน
                 </div>
                 <p id="receipt_date" class="pt-1 text-center"></p>
                 <div id="receipt_items" class="border-t border-b border-dashed border-slate-200 py-1.5 space-y-1"></div>
@@ -238,18 +294,18 @@
             </div>
 
             <!-- QR Code ชำระเงิน -->
-            <div class="border-t pt-5 text-center space-y-3">
-                <p class="text-sm font-semibold text-slate-700">📸 ชำระเงินเพื่อลงคิวครับ</p>
+            <div id="payment_section" class="border-t pt-5 text-center space-y-3 payment-disabled" aria-live="polite">
+                <p id="payment_status" class="text-sm font-semibold text-slate-700">กรุณาตรวจรายการให้ครบก่อนชำระเงินครับ</p>
                 <div class="inline-block bg-white p-2 border border-slate-200 rounded-2xl shadow-md">
                     <img src="myqr.jpg" alt="QR Code สำหรับโอนเงิน" class="w-56 max-w-full mx-auto rounded-xl">
                 </div>
                 <p class="text-xs text-slate-500 font-medium">ชื่อบัญชี: นาย สรวิชญ์ น้อยวิมล (MR. SORAWIT NOIWIMOL)</p>
-                <p class="text-xs text-slate-400">เมื่อโอนเงินแล้ว แจ้งสลิปโอนและรูปหน้าตรงในแชทร้านครับ</p>
+                <p class="text-xs text-slate-500">ตรวจยอดและรายการด้านบนก่อนโอน เมื่อโอนแล้วแจ้งสลิปและรูปหน้าตรงในแชทร้านครับ</p>
             </div>
 
             <!-- ปุ่มยืนยันคำสั่งซื้อท้ายฟอร์ม -->
-            <button type="button" onclick="window.close(); alert('ขอบคุณที่ใช้บริการครับ คุณสามารถปิดหน้าต่างนี้ได้เลย')" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-medium p-3.5 rounded-xl shadow-lg transition duration-200 text-center block text-sm active:scale-[0.99]">
-                หากแคปแล้ว กดออกได้เลยครับ
+            <button type="button" onclick="copyReceiptSummary()" class="w-full bg-slate-700 hover:bg-slate-800 focus:outline-none focus:ring-4 focus:ring-slate-300 text-white font-medium p-3.5 rounded-xl transition duration-200 text-center block text-sm active:scale-[0.99]">
+                คัดลอกใบสรุปสำหรับส่งให้ร้าน
             </button>
         </form>
     </div>
@@ -257,9 +313,16 @@
     <script>
         const today = new Date();
         document.getElementById('receipt_date').innerText = 'วันที่สั่งซื้อ: ' + today.toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' }) + ' น.';
+        let showValidation = false;
+        let orderReady = false;
+
+        function markInteracted() {
+            showValidation = true;
+        }
 
         // ฟังก์ชันเลือกประเภทชุด
         function selectSuit(input, suitType) {
+            markInteracted();
             document.querySelectorAll('.suit-card').forEach(card => {
                 card.classList.remove('selected-box');
             });
@@ -286,17 +349,9 @@
             calculateTotal();
         }
 
-        // ฟังก์ชันจัดการเลือก Checkbox สีฉากหลัง (ทำหน้าที่เหมือน radio เลือกได้ทีละอัน)
-        function selectBgColor(clickedCheckbox) {
-            if (clickedCheckbox.checked) {
-                document.querySelectorAll('input[name="bg_color"]').forEach(cb => {
-                    if (cb !== clickedCheckbox) cb.checked = false;
-                });
-            } else {
-                clickedCheckbox.checked = true; // บังคับให้เลือกไว้อย่างน้อยหนึ่งอัน
-            }
-
-            // อัปเดตคลาสดีไซน์นูนเด่นของปุ่มสีฉากหลัง
+        // ฟังก์ชันจัดการเลือกสีฉากหลัง
+        function selectBgColor() {
+            markInteracted();
             document.querySelectorAll('input[name="bg_color"]').forEach(cb => {
                 cb.parentElement.classList.toggle('selected-box', cb.checked);
             });
@@ -306,6 +361,7 @@
 
         // ฟังก์ชันจัดการเลือก Checkbox ขนาดภาพ (คุมเงื่อนไข ครึ่งโหล=1, 1โหล=2)
         function handleSizeSelection(clickedCheckbox) {
+            markInteracted();
             const isFullQty = document.getElementById('qty_full').checked;
             const checkedSizes = document.querySelectorAll('input[name="print_size"]:checked');
             
@@ -327,26 +383,20 @@
                 cb.parentElement.classList.toggle('selected-box', cb.checked);
             });
             
+            updateSizeHelper();
             calculateTotal();
         }
 
         // ฟังก์ชันเลือกจำนวนรูป
         function selectQuantity(type) {
+            markInteracted();
             const cbHalf = document.getElementById('qty_half');
             const cbFull = document.getElementById('qty_full');
             
             if (type === 'half') {
-                if (cbHalf.checked) {
-                    cbFull.checked = false;
-                } else {
-                    cbHalf.checked = true;
-                }
+                cbHalf.checked = true;
             } else if (type === 'full') {
-                if (cbFull.checked) {
-                    cbHalf.checked = false;
-                } else {
-                    cbFull.checked = true;
-                }
+                cbFull.checked = true;
             }
             
             cbHalf.parentElement.parentElement.classList.toggle('selected-box', cbHalf.checked);
@@ -363,10 +413,12 @@
                 cb.parentElement.classList.toggle('selected-box', cb.checked);
             });
             
+            updateSizeHelper();
             calculateTotal();
         }
 
         function togglePrint(show) {
+            markInteracted();
             const printOptions = document.getElementById('print_options');
             if (show) {
                 printOptions.classList.remove('hidden');
@@ -374,7 +426,57 @@
                 printOptions.classList.add('hidden');
                 document.getElementById('shipping_address').value = '';
             }
+            updateSizeHelper();
             calculateTotal();
+        }
+
+        function updateSizeHelper() {
+            const helper = document.getElementById('size_helper');
+            const selectedCount = document.querySelectorAll('input[name="print_size"]:checked').length;
+            const maxCount = document.getElementById('qty_full').checked ? 2 : 1;
+            const packageText = document.getElementById('qty_full').checked ? 'หนึ่งโหล' : 'ครึ่งโหล';
+            helper.innerText = `เลือกแล้ว ${selectedCount}/${maxCount} ขนาด สำหรับ${packageText}`;
+        }
+
+        function setCheck(id, passed, text) {
+            const item = document.getElementById(id);
+            item.innerText = `${passed ? '✓' : '○'} ${text}`;
+            item.className = passed ? 'text-emerald-700' : 'text-slate-600';
+        }
+
+        function updateReadiness({ suitRadio, hairNumber, wantsPrint, shippingAddress }) {
+            const hasSuit = Boolean(suitRadio);
+            const hasHairPlan = Boolean(hairNumber) || true; // ลูกค้าสามารถส่งภาพทรงผมในแชทแทนได้
+            const hasShipping = !wantsPrint || shippingAddress.trim().length >= 12;
+            const isReady = hasSuit && hasHairPlan && hasShipping;
+
+            setCheck('check_suit', hasSuit, 'เลือกประเภทชุด');
+            setCheck('check_hair', hasHairPlan, hairNumber ? `เลือกทรงผมเบอร์ ${hairNumber}` : 'ส่งภาพทรงผมในแชทแทน');
+            setCheck('check_shipping', hasShipping, wantsPrint ? 'ที่อยู่จัดส่งครบถ้วน' : 'ไม่รับภาพปรินต์จัดส่ง');
+
+            const readyBadge = document.getElementById('ready_badge');
+            const paymentSection = document.getElementById('payment_section');
+            const paymentStatus = document.getElementById('payment_status');
+            const suitError = document.getElementById('suit_error');
+            const shippingError = document.getElementById('shipping_error');
+
+            readyBadge.innerText = isReady ? 'พร้อมชำระเงิน' : 'ยังไม่พร้อมชำระ';
+            readyBadge.className = isReady
+                ? 'rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800'
+                : 'rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800';
+
+            paymentSection.classList.toggle('payment-disabled', !isReady);
+            paymentSection.setAttribute('aria-disabled', String(!isReady));
+            paymentStatus.innerText = isReady
+                ? 'ชำระเงินเพื่อลงคิวครับ'
+                : 'กรุณาตรวจรายการให้ครบก่อนชำระเงินครับ';
+
+            suitError.classList.toggle('hidden', hasSuit || !showValidation);
+            shippingError.classList.toggle('hidden', hasShipping || !showValidation);
+            document.getElementById('shipping_address').classList.toggle('field-error', wantsPrint && !hasShipping && showValidation);
+
+            orderReady = isReady;
+            return isReady;
         }
 
         function calculateTotal() {
@@ -428,7 +530,8 @@
             document.getElementById('formula_express').innerText = ePrice + " บ.";
 
             // ภาพปรินต์จัดส่ง
-            if(document.querySelector('input[name="want_print"]:checked').value === 'yes') {
+            const wantsPrint = document.querySelector('input[name="want_print"]:checked').value === 'yes';
+            if(wantsPrint) {
                 let sizeArray = [];
                 document.querySelectorAll('input[name="print_size"]:checked').forEach(cb => {
                     sizeArray.push(cb.value);
@@ -463,8 +566,48 @@
             document.getElementById('receipt_items').innerHTML = items;
             document.getElementById('receipt_details').innerHTML = details;
             document.getElementById('receipt_total').innerText = total.toFixed(2) + " THB";
+
+            updateReadiness({
+                suitRadio,
+                hairNumber,
+                wantsPrint,
+                shippingAddress: document.getElementById('shipping_address').value
+            });
+        }
+
+        function copyReceiptSummary() {
+            showValidation = true;
+            calculateTotal();
+
+            if (!orderReady) {
+                alert('กรุณาตรวจรายการให้ครบก่อนคัดลอกใบสรุปครับ');
+                return;
+            }
+
+            const receiptText = [
+                document.getElementById('receipt_date').innerText,
+                document.getElementById('receipt_items').innerText,
+                document.getElementById('receipt_details').innerText,
+                'TOTAL: ' + document.getElementById('receipt_total').innerText
+            ].filter(Boolean).join('\n');
+
+            if (!receiptText.trim()) {
+                alert('ยังไม่มีรายการให้คัดลอกครับ');
+                return;
+            }
+
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(receiptText).then(() => {
+                    alert('คัดลอกใบสรุปแล้วครับ นำไปส่งให้ทางร้านในแชทได้เลย');
+                }).catch(() => {
+                    alert(receiptText);
+                });
+            } else {
+                alert(receiptText);
+            }
         }
         
+        updateSizeHelper();
         calculateTotal();
     </script>
 </body>
